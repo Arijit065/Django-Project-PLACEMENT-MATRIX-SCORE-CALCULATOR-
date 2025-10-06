@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Placement Scorer – Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f6fa; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; margin-bottom: 20px; }
+        form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { font-weight: bold; }
+        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+        button { grid-column: span 2; padding: 12px; background: #4CAF50; border: none; color: white;
+            font-size: 16px; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .result { grid-column: span 2; padding: 15px; margin-top: 15px; border-radius: 8px;
+            background: #f9f9f9; font-weight: bold; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Placement Scorer – Student Calculator</h1>
+        <form id="placementForm">
+            <!-- Academic -->
+            <label>CGPA (Upto 2nd Semester)</label>
+            <input type="number" step="0.01" name="cgpa">
+
+            <label>No of Standing Arrears</label>
+            <input type="number" name="standing_arrears">
+
+            <label>Projects Done</label>
+            <input type="number" name="projects">
+
+            <!-- Internship -->
+            <label>Internship Experience (Months)</label>
+            <input type="number" name="internship_months">
+
+            <!-- Hackathons -->
+            <label>No. of Hackathons Participated</label>
+            <input type="number" name="hackathons_done">
+
+            <label>No. of Hackathons Won</label>
+            <input type="number" name="hackathons_won">
+
+            <button type="button" onclick="calculateScore()">Calculate Placement Score</button>
+
+            <div id="result" class="result">Your score will appear here...</div>
+        </form>
+    </div>
+
+    <script>
+        function calculateScore() {
+            let form = document.forms["placementForm"];
+            let cgpa = parseFloat(form["cgpa"].value) || 0;
+            let arrears = parseInt(form["standing_arrears"].value) || 0;
+            let projects = parseInt(form["projects"].value) || 0;
+            let internship = parseInt(form["internship_months"].value) || 0;
+            let hackathonsDone = parseInt(form["hackathons_done"].value) || 0;
+            let hackathonsWon = parseInt(form["hackathons_won"].value) || 0;
+
+            // Marks Calculation (fixed scheme)
+            let cgpaMarks = Math.min((cgpa / 10) * 40, 40);  // max 40
+            let projectMarks = Math.min(projects * 10, 20);   // max 20
+            let internshipMarks = Math.min(internship * 5, 20); // max 20
+            let hackathonDoneMarks = Math.min(hackathonsDone * 5, 10); // max 10
+            let hackathonWonMarks = Math.min(hackathonsWon * 10, 10);  // max 10
+            let arrearPenalty = arrears * 5; // deduction
+
+            let score = cgpaMarks + projectMarks + internshipMarks + hackathonDoneMarks + hackathonWonMarks - arrearPenalty;
+
+            if (score < 0) score = 0;
+            if (score > 100) score = 100;
+
+            // Show breakdown
+            document.getElementById("result").innerHTML =
+                " Placement Score Breakdown (out of 100):\n" +
+                "CGPA Marks: " + cgpaMarks.toFixed(2) + " / 40\n" +
+                "Projects Marks: " + projectMarks.toFixed(2) + " / 20\n" +
+                "Internship Marks: " + internshipMarks.toFixed(2) + " / 20\n" +
+                "Hackathon Participation: " + hackathonDoneMarks.toFixed(2) + " / 10\n" +
+                "Hackathon Wins: " + hackathonWonMarks.toFixed(2) + " / 10\n" +
+                "Arrear Penalty: -" + arrearPenalty.toFixed(2) + "\n\n" +
+                "Final Placement Score: " + score.toFixed(2) + " / 100";
+        }
+    </script>
+</body>
+</html>
